@@ -20,7 +20,7 @@ DeepSeek Chat Client
 options:
   -h, --help            show this help message and exit
   --model {chat,reasoner}
-                        Model to use
+                        Model to use, default is 'chat'
   --stream              Enable streaming responses
   --temperature TEMPERATURE
                         Sampling temperature (0.0 - 2.0)

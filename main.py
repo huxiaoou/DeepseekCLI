@@ -1,25 +1,25 @@
 import os
 import argparse
-from enum import StrEnum
-from openai import OpenAI
-from husfort.qutility import SFG, SFY
-
-
-class Models(StrEnum):
-    DEEPSEEK_REASONER = "deepseek-reasoner"
-    DEEPSEEK_CHAT = "deepseek-chat"
-
-
-MODEL_CONVERSION = {
-    "chat": Models.DEEPSEEK_CHAT,
-    "reasoner": Models.DEEPSEEK_REASONER,
-}
+from typedef import MODEL_CONVERSION
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="DeepSeek Chat Client", formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument("--model", type=str, choices=("chat", "reasoner"), default="chat", help="Model to use")
-    parser.add_argument("--stream", action="store_true", help="Enable streaming responses")
+    parser = argparse.ArgumentParser(
+        description="DeepSeek Chat Client",
+        formatter_class=argparse.RawTextHelpFormatter,
+    )
+    parser.add_argument(
+        "--model",
+        type=str,
+        choices=MODEL_CONVERSION.keys(),
+        default="chat",
+        help="Model to use, default is 'chat'",
+    )
+    parser.add_argument(
+        "--stream",
+        action="store_true",
+        help="Enable streaming responses",
+    )
     parser.add_argument(
         "--temperature",
         type=float,
@@ -35,38 +35,10 @@ def parse_args():
     return parser.parse_args()
 
 
-def main(
-    api_key: str,
-    base_url: str,
-    model: Models,
-    stream: bool,
-    temperature: float,
-):
-    client = OpenAI(api_key=api_key, base_url=base_url)
-    messages = []
-    while True:
-        print("-----------------------------")
-        user_input = input(SFY("User[Input 'q' to quit]: "))
-        if user_input.lower() in ["q"]:
-            break
-
-        msg_question = {"role": "user", "content": user_input}
-        messages.append(msg_question)
-        response = client.chat.completions.create(
-            model=model,
-            messages=messages,
-            stream=stream,
-            temperature=temperature,
-        )
-        msg_answer = response.choices[0].message.to_dict()
-        print(SFG("Deepseek:"), msg_answer["content"])
-        if model == Models.DEEPSEEK_REASONER:
-            msg_answer.pop("reasoning_content")
-        messages.append(msg_answer)
-
-
 if __name__ == "__main__":
     if api_key := os.environ.get("DEEPSEEK_API_KEY"):
+        from solutions import main
+
         args = parse_args()
         base_url = "https://api.deepseek.com"
         main(
