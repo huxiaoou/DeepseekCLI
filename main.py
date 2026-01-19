@@ -1,5 +1,11 @@
 import os
 import argparse
+import sys
+
+
+script_dir = r"E:\Projects\DeepseekCLI"
+sys.path.insert(0, script_dir)
+
 from typedef import MODEL_CONVERSION
 
 
@@ -12,13 +18,13 @@ def parse_args():
         "--model",
         type=str,
         choices=MODEL_CONVERSION.keys(),
-        default="chat",
-        help="Model to use, default is 'chat'",
+        default="reasoner",
+        help="Model to use, default is 'reasoner'\n",
     )
     parser.add_argument(
-        "--stream",
+        "--disable_stream",
         action="store_true",
-        help="Enable streaming responses",
+        help="Disable streaming responses",
     )
     parser.add_argument(
         "--temperature",
@@ -45,7 +51,7 @@ if __name__ == "__main__":
             base_url=base_url,
             model=MODEL_CONVERSION[args.model],
             api_key=api_key,
-            stream=args.stream,
+            stream=not args.disable_stream,
             temperature=args.temperature,
         )
     else:

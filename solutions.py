@@ -1,3 +1,4 @@
+import datetime as dt
 from openai import OpenAI
 from openai.types.chat.chat_completion import ChatCompletion
 from openai.types.chat.chat_completion_chunk import ChatCompletionChunk
@@ -57,7 +58,9 @@ def main(
     round: int = 0
     while True:
         print(f"\n\n{SFG(f'Round {round}'):-^64s}")
-        user_input = input(SFY("User[Input 'q' to quit]: "))
+        user_input = input(
+            f"User@{SFY(dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3])} [Input {SFY('q')} to quit]: "
+        )
         if user_input.lower() in ["q"]:
             break
 
